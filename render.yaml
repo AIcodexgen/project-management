@@ -12,8 +12,16 @@ services:
         generateValue: true
       - key: DB_CONNECTION
         value: mysql
+      - key: WEBROOT
+        value: /var/www/html/public
+      - key: SKIP_NPM
+        value: "1"
+      - key: SKIP_COMPOSER
+        value: "1"
+      - key: PHP_ERRORS_STDERR
+        value: "1"
       - key: PORT
-        value: "8000"
+        value: "80"
       - key: APP_URL
         sync: false
       - key: DB_HOST
