@@ -1,23 +1,29 @@
-# --- Stage 1: Build Frontend Assets ---
+# --- Stage 1: Install PHP Dependencies ---
+FROM composer:2.5 AS composer-builder
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --ignore-platform-reqs
+
+# --- Stage 2: Build Frontend Assets ---
 FROM node:18-alpine AS asset-builder
 WORKDIR /app
+COPY --from=composer-builder /app/vendor ./vendor
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-# --- Stage 2: Production PHP Environment ---
+# --- Stage 3: Production PHP Environment ---
 FROM richarvey/nginx-php-fpm:latest
 WORKDIR /var/www/html
 
 # Copy project files
 COPY . .
 
-# Copy built assets from Stage 1
-# This ensures we have the compiled CSS/JS without needing Node.js in production
+# Copy built assets from Stage 2
 COPY --from=asset-builder /app/public/build ./public/build
 
-# Install PHP dependencies
+# Final PHP dependency install (with scripts and optimization)
 RUN composer install --no-dev --optimize-autoloader
 
 # Ensure permissions
