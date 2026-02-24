@@ -6,15 +6,18 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Build time setup - ensuring everything is ready in the image
+# Build time setup
 RUN composer install --no-dev --optimize-autoloader
 RUN npm install && npm run build && rm -rf node_modules
 
 # Ensure permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port (Internal standard)
+# Make the deploy script executable
+RUN chmod +x render-deploy.sh
+
+# Expose port 80 (standard for this image)
 EXPOSE 80
 
-# We let the richarvey image handle the startup, but we'll use 
-# env vars in render.yaml to control its behavior.
+# Use our custom script to start the container
+CMD ["./render-deploy.sh"]
