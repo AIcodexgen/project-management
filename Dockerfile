@@ -1,4 +1,4 @@
-FROM richarvey/php-fpm-laravel:3.0.0
+FROM richarvey/nginx-php-fpm:latest
 
 # Set working directory
 WORKDIR /var/www/html
@@ -16,8 +16,9 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Make the deploy script executable
 RUN chmod +x render-deploy.sh
 
-# Expose port 80 (standard for this image)
+# Expose port 80
 EXPOSE 80
 
-# Use our custom script to start the container
+# The richarvey image uses /start.sh by default
+# We use our custom script which eventually calls /start.sh
 CMD ["./render-deploy.sh"]
