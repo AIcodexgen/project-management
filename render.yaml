@@ -12,6 +12,8 @@ services:
         generateValue: true
       - key: DB_CONNECTION
         value: mysql
+      - key: PORT
+        value: "8000"
       - key: APP_URL
         sync: false
       - key: DB_HOST
